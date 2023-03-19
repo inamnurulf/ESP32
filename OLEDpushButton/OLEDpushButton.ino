@@ -21,19 +21,31 @@ void setup() {
 
 void loop() {
   if (digitalRead(BUTTON_INC) == LOW) {
+    if (digitalRead(BUTTON_DEC) == LOW){
+      value=0;
+      delay(400);
+    }
+    else{
     value++;
     Serial.println(value);
     delay(200);
+    }
   }
 
   if (digitalRead(BUTTON_DEC) == LOW) {
+    if(digitalRead(BUTTON_INC) == LOW){
+      value=0;
+      delay(400);
+    }
+    else {
     value--;
     Serial.println(value);
     delay(200);
+    }
   }
 
   display.clearDisplay();
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
   display.print("Value: ");
