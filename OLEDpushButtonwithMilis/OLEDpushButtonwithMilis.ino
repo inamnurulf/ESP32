@@ -48,7 +48,7 @@ void loop() {
         }
       }
     }
-  if (digitalRead(BUTTON_INC)==LOW || digitalRead(BUTTON_DEC)== LOW){
+  if (digitalRead(BUTTON_INC)==LOW ^ digitalRead(BUTTON_DEC)== LOW){
     onclickTime = millis();
     Serial.println(onclickTime);
   }
