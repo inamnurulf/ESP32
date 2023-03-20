@@ -7,9 +7,11 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#define DELAY 100
 #define BUTTON_INC 13
 #define BUTTON_DEC 14
 
+unsigned long onclickTime = 0;
 int value = 0;
 
 Adafruit_SSD1306 display(128, 32, &Wire, -1);
@@ -25,28 +27,30 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(BUTTON_INC) == LOW) {
-    if (digitalRead(BUTTON_DEC) == LOW){
-      value=0;
-      delay(400);
-    }
-    else{
-    value++;
-    Serial.println(value);
-    delay(200);
-    }
-  }
+    if(millis()-onclickTime > DELAY){
+      if (digitalRead(BUTTON_INC) == LOW) {
+        if (digitalRead(BUTTON_DEC) == LOW){
+        value=0;
+        delay(400);
+        }
+        else{
+        value++;
+        }
+      }
 
-  if (digitalRead(BUTTON_DEC) == LOW) {
-    if(digitalRead(BUTTON_INC) == LOW){
-      value=0;
-      delay(400);
+      if (digitalRead(BUTTON_DEC) == LOW && value != 0) {
+        if(digitalRead(BUTTON_INC) == LOW){
+        value=0;
+        delay(400);
+        }
+        else {
+        value--;
+        }
+      }
     }
-    else {
-    value--;
-    Serial.println(value);
-    delay(200);
-    }
+  if (digitalRead(BUTTON_INC)==LOW || digitalRead(BUTTON_DEC)== LOW){
+    onclickTime = millis();
+    Serial.println(onclickTime);
   }
 
   display.clearDisplay();
