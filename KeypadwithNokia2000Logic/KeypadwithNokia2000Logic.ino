@@ -69,14 +69,35 @@ void loop() {
             if (CAPSLOCK==false){
               if(row==3 || col==3|| (row==0 && col==0)){
               currentchar=currentKey.charAt(numPresses % currentKey.length());
+              if(numPresses!=0){
+                text.remove(text.length()-1);
+                text+=currentchar;
+              }
+              else{
+                text+=currentchar;
+              }
               }
               else{
               currentchar=currentKey.charAt(numPresses % currentKey.length())-('A'-'a');
+              if(numPresses!=0){
+                text.remove(text.length()-1);
+                text+=currentchar;
+              }
+              else{
+                text+=currentchar;
+              }
               }
             // Serial.print(currentKey.charAt(numPresses % currentKey.length()));
             }
             else{
             currentchar=currentKey.charAt(numPresses % currentKey.length());
+            if(numPresses!=0){
+                text.remove(text.length()-1);
+                text+=currentchar;
+              }
+              else{
+                text+=currentchar;
+              }
             }
             onpressTime=millis();
             onclickTime = millis();
@@ -85,6 +106,7 @@ void loop() {
       }
     }
     if((millis()-onpressTime)>WAITING && currentchar != '\0'){
+      text.remove(text.length()-1);
       text+=currentchar;
       currentchar='\0';
       Serial.print(text);
@@ -99,7 +121,7 @@ void loop() {
     pinMode(colPins[col], INPUT);
   }
   display.clearDisplay();
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
   display.println(text);
