@@ -6,17 +6,19 @@
 const int ROWS = 4;
 const int COLS = 4;
 bool CAPSLOCK = true;
+
 String keys[ROWS][COLS] = {
   {" ", "ABC", "DEF", "BACKSPACE"},
   {"GHI", "JKL", "MNO", "CAPSLOCK"},
   {"PQRS", "TUV", "VWXYZ", "@"},
   {"0", "+", "-", "*"}
 };
+
 unsigned long onclickTime = 0;
 unsigned long onpressTime = 0;
 int numPresses = 0;
 String currentKey = "";
-String currentchar ="";
+char currentchar ='\0';
 String text="";
 
 // Define row and column
@@ -52,6 +54,9 @@ void loop() {
             CAPSLOCK= !CAPSLOCK;
             Serial.print(CAPSLOCK);
           }
+          else if (row==3 && col==3){
+            text+="\n";
+          }
           else{
             if((millis()-onpressTime)<WAITING){
             numPresses++;
@@ -61,21 +66,30 @@ void loop() {
             numPresses=0;
             // Serial.print(numPresses);
             }
-            currentchar=currentKey.charAt(numPresses % currentKey.length());
+            if (CAPSLOCK==false){
+              if(row==3 || col==3|| (row==0 && col==0)){
+              currentchar=currentKey.charAt(numPresses % currentKey.length());
+              }
+              else{
+              currentchar=currentKey.charAt(numPresses % currentKey.length())-('A'-'a');
+              }
             // Serial.print(currentKey.charAt(numPresses % currentKey.length()));
+            }
+            else{
+            currentchar=currentKey.charAt(numPresses % currentKey.length());
+            }
             onpressTime=millis();
             onclickTime = millis();
           }
         }
       }
     }
-    if((millis()-onpressTime)>WAITING && currentchar != ""){
+    if((millis()-onpressTime)>WAITING && currentchar != '\0'){
       text+=currentchar;
-      currentchar="";
+      currentchar='\0';
       Serial.print(text);
       Serial.print("\n");
-
-          }
+      }
     
     for (int row = 0; row < ROWS; row++) {
       pinMode(rowPins[row], OUTPUT);
