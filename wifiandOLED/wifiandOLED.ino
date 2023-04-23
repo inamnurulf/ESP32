@@ -22,6 +22,7 @@ const int ROWS = 4;
 const int COLS = 4;
 int hourss = 0, minutess = 0, secondss = 0;
 bool blink = true;
+bool keepBlinking = false;
 
 String keys[ROWS][COLS] = {
     {"1", "2", "3", "hour"},
@@ -37,6 +38,9 @@ String currentKey = "";
 
 int rowPins[ROWS] = {13, 12, 14, 27};
 int colPins[COLS] = {26, 25, 33, 32};
+
+// led pin
+int ledPin = 2;
 
 void setup()
 {
@@ -77,6 +81,7 @@ void setup()
   }
   Serial.println("");
   Serial.println("Waktu berhasil disinkronisasi");
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop()
@@ -99,6 +104,64 @@ void loop()
           if (col == 3)
           {
             numberNow = row;
+            if (row == 3)
+            {
+              keepBlinking = false;
+            }
+          }
+          if (currentKey == "hour")
+          {
+            hourss += 1;
+            if (hourss > 23)
+              hourss = 0; // Jika melebihi 23, kembali ke 0
+          }
+          else if (currentKey == "minute")
+          {
+            minutess += 1;
+            if (minutess > 59)
+              minutess = 0; // Jika melebihi 59, kembali ke 0
+          }
+          else if (currentKey == "second")
+          {
+            secondss += 1;
+            if (secondss > 59)
+              secondss = 0; // Jika melebihi 59, kembali ke 0
+          }
+          if (currentKey == "1")
+          {
+            hourss += 10;
+            if (hourss > 23)
+              hourss = 0; // Jika melebihi 23, kembali ke 0
+          }
+          else if (currentKey == "4")
+          {
+            minutess += 10;
+            if (minutess > 59)
+              minutess = 0; // Jika melebihi 59, kembali ke 0
+          }
+          else if (currentKey == "7")
+          {
+            secondss += 10;
+            if (secondss > 59)
+              secondss = 0; // Jika melebihi 59, kembali ke 0
+          }
+          if (currentKey == "2")
+          {
+            hourss += 5;
+            if (hourss > 23)
+              hourss = 0; // Jika melebihi 23, kembali ke 0
+          }
+          else if (currentKey == "5")
+          {
+            minutess += 5;
+            if (minutess > 59)
+              minutess = 0; // Jika melebihi 59, kembali ke 0
+          }
+          else if (currentKey == "8")
+          {
+            secondss += 5;
+            if (secondss > 59)
+              secondss = 0; // Jika melebihi 59, kembali ke 0
           }
         }
       }
@@ -118,112 +181,76 @@ void loop()
   time_t now = time(nullptr);
   tm timeInfo;
   localtime_r(&now, &timeInfo);
+  if (keepBlinking == true)
+  {
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.print("ALARM HIT");
+    display.display();
+    delay(500);
+    digitalWrite(ledPin, HIGH);
 
-  // Tampilkan waktu di OLED
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.print(daysOfTheWeek[timeInfo.tm_wday]);
-  display.print(", ");
-  display.print(timeInfo.tm_mday);
-  display.print("/");
-  display.print(timeInfo.tm_mon + 1);
-  display.print("/");
-  display.print(timeInfo.tm_year + 1900);
-  display.setCursor(0, 10);
-  display.print(timeInfo.tm_hour);
-  display.print(":");
-  if (timeInfo.tm_min < 10)
-  {
-    display.print("0");
-  }
-  display.print(timeInfo.tm_min);
-  display.print(":");
-  if (timeInfo.tm_sec < 10)
-  {
-    display.print("0");
-  }
-  display.print(timeInfo.tm_sec);
-  display.setCursor(0, 20);
-  display.print("alarm : ");
-  if (numberNow == 0)
-  {
-    if ((millis() - blinkTime) > WAITBLINK)
-    {
-      if (blink == true)
-      {
-        if (hourss < 10)
-        {
-          display.print("0");
-        }
-        display.print(hourss);
-      }
-      blink != blink;
-      blinkTime = millis();
-    }
-    }
-    else
-    {
-      if (hourss < 10)
-      {
-        display.print("0");
-      }
-      display.print(hourss);
-  }
+    // Wait for 1 second
+    delay(500);
 
-  display.print(":");
-  if (numberNow == 1)
+    // Turn the LED off
+    digitalWrite(ledPin, LOW);
+  }
+  else
   {
-    if ((millis() - blinkTime) > WAITBLINK)
+
+    // Tampilkan waktu di OLED
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.print(daysOfTheWeek[timeInfo.tm_wday]);
+    display.print(", ");
+    display.print(timeInfo.tm_mday);
+    display.print("/");
+    display.print(timeInfo.tm_mon + 1);
+    display.print("/");
+    display.print(timeInfo.tm_year + 1900);
+    display.setCursor(0, 10);
+    display.print(timeInfo.tm_hour);
+    display.print(":");
+    if (timeInfo.tm_min < 10)
     {
-      if (blink == true)
-      {
-        if (minutess < 10)
-        {
-          display.print("0");
-        }
-        display.print(minutess);
-      }
-      blink != blink;
-      blinkTime = millis();
+      display.print("0");
     }
-    }
-    else
+    display.print(timeInfo.tm_min);
+    display.print(":");
+    if (timeInfo.tm_sec < 10)
     {
-      if (minutess < 10)
-      {
-        display.print("0");
-      }
-      display.print(minutess);
+      display.print("0");
+    }
+    display.print(timeInfo.tm_sec);
+    display.setCursor(0, 20);
+    display.print("alarm : ");
+
+    if (hourss < 10)
+    {
+      display.print("0");
+    }
+    display.print(hourss);
+    display.print(":");
+
+    if (minutess < 10)
+    {
+      display.print("0");
+    }
+    display.print(minutess);
+    display.print(":");
+
+    if (secondss < 10)
+    {
+      display.print("0");
+    }
+    display.print(secondss);
+    display.display();
+    delay(1000);
   }
 
-  display.print(":");
-  if (numberNow == 2)
+  if (timeInfo.tm_hour == hourss && timeInfo.tm_min == minutess && timeInfo.tm_sec == secondss)
   {
-    if ((millis() - blinkTime) > WAITBLINK)
-    {
-      if (blink == true)
-      {
-        if (secondss < 10)
-        {
-          display.print("0");
-        }
-        display.print(secondss);
-      }
-
-      blink != blink;
-      blinkTime = millis();
-    }
-    }
-    else
-    {
-      if (secondss < 10)
-      {
-        display.print("0");
-      }
-      display.print(secondss);
+    keepBlinking = true;
   }
-
-  display.display();
-
-  delay(1000);
 }
