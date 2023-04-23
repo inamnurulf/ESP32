@@ -8,8 +8,8 @@ Adafruit_SSD1306 display(128, 32, &Wire, -1);
 
 char daysOfTheWeek[7][12] = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"};
 
-const char *ssid = "@Rumah Watik";
-const char *password = "123teko100";
+const char *ssid = "Dhimz_Net";
+const char *password = "halahsaksakee";
 const char *ntpServer = "id.pool.ntp.org";
 const long gmtOffset_sec = 7 * 3600; // GMT +7 (WIB)
 const int daylightOffset_sec = 0;
